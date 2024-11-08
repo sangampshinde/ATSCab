@@ -26,7 +26,7 @@
             height: 100px !important;
             border-radius: 50% !important;
             background-color: #38d762 !important;
-            padding: 10px !important;
+            padding: 2px !important;
             margin-bottom: 15px !important;
         }
 

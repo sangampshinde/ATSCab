@@ -55,9 +55,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 // ----------------------------------------------------------------
+$vehicles = getVehicleTypes();
+// print_r($vehicles);
 
 
-
+if (!empty($vehicleTypes)) {
+    echo "<p>Vehicle Types List:</p>";
+    foreach ($vehicleTypes as $vehicle) {
+        echo "<pre>";
+        print_r($vehicle);  // This will show the structure of each item in $vehicleTypes
+        echo "</pre>";
+    }
+} else {
+    echo "<p>No vehicle types available.</p>";
+}
 
 
 
@@ -65,6 +76,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
 ?>
+
 
 
 
@@ -104,7 +116,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <div class="col-lg-6 col-md-6">
                                 <div class="form-group">
                                     <label for="full_name" class="label-animate">Full Name</label>
-                                    <input type="text" class="text-input" name="full_name" id="full_name" value="John Doe" required>
+                                    <input type="text" class="text-input" name="full_name" id="full_name"  required>
                                     <span id="nameError" class="text-danger"></span>
                                 </div>
                             </div>
@@ -113,7 +125,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <div class="col-lg-6 col-md-6">
                                 <div class="form-group">
                                     <label for="mobile_no" class="label-animate">Mobile No</label>
-                                    <input type="text" class="text-input" name="mobile_no" id="mobile_no" value="+1 234 567 890" required>
+                                    <input type="text" class="text-input" name="mobile_no" id="mobile_no"  required>
                                     <span id="mobileError" class="text-danger"></span>
                                 </div>
                             </div>
@@ -122,7 +134,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <div class="col-lg-6 col-md-6">
                                 <div class="form-group">
                                     <label for="mail_id" class="label-animate">Email ID</label>
-                                    <input type="email" class="text-input" name="mail_id" id="mail_id" value="john.doe@example.com" required>
+                                    <input type="email" class="text-input" name="mail_id" id="mail_id"  required>
                                     <span id="emailError" class="text-danger"></span>
                                 </div>
                             </div>
@@ -140,7 +152,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <div class="col-lg-6 col-md-6">
                                 <div class="form-group">
                                     <label for="destination" class="label-animate">Destination</label>
-                                    <input type="text" class="text-input" name="destination" id="destination" value="New York" required>
+                                    <input type="text" class="text-input" name="destination" id="destination"  required>
                                     <span id="destinationError" class="text-danger"></span>
                                 </div>
                             </div>
@@ -149,20 +161,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <div class="col-lg-6 col-md-6">
                                 <div class="form-group">
                                     <label for="pickup" class="label-animate">Pick Up</label>
-                                    <input type="text" class="text-input" name="pickup" id="pickup" value="Central Park" required>
+                                    <input type="text" class="text-input" name="pickup" id="pickup" required>
                                     <span id="pickupError" class="text-danger"></span>
                                 </div>
                             </div>
 
-                            <!-- Preferred Vehicle -->
+                        <!-- Preferred Vehicle -->
                             <div class="col-lg-6 col-md-6">
                                 <div class="form-group">
                                     <label for="vehicle_type" class="">Preferred Vehicle</label>
                                     <select class="text-input" name="vehicle_type" id="vehicle_type" required>
                                         <option value="" disabled selected>Select Vehicle Type</option>
-                                        <option value="1">Sedan</option>
-                                        <option value="2">SUV</option>
-                                        <option value="3">Van</option>
+                                        
                                     </select>
                                     <span id="vehicleError" class="text-danger"></span>
                                 </div>
@@ -172,7 +182,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <div class="col-lg-12">
                                 <div class="form-group">
                                     <label for="other_things" class="label-animate">Other Details</label>
-                                    <textarea class="text-input" name="other_things" rows="3">No special requests</textarea>
+                                    <textarea class="text-input" name="other_things" rows="3"></textarea>
                                     <span id="detailsError" class="text-danger"></span>
                                 </div>
                             </div>
@@ -181,7 +191,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <div class="col-lg-6 col-md-6">
                                 <div class="form-group">
                                     <label for="journey_time" class="label-animate-time">Time</label>
-                                    <input type="time" class="text-input" name="journey_time" id="journey_time" value="12:00">
+                                    <input type="time" class="text-input" name="journey_time" id="journey_time" >
                                     <span id="timeError" class="text-danger"></span>
                                 </div>
                             </div>
@@ -189,7 +199,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <div class="col-lg-6 col-md-6">
                                 <div class="form-group">
                                     <label for="journey_date" class="label-animate-date">Date of Journey</label>
-                                    <input type="date" class="text-input" name="journey_date" id="journey_date" value="2023-12-31" required>
+                                    <input type="date" class="text-input" name="journey_date" id="journey_date" required>
                                     <span id="dateError" class="text-danger"></span>
                                 </div>
                             </div>
@@ -366,9 +376,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="testimonial-dots mx-auto"></div>
     </div>
 </section>
-
-
-
 
 <script type="text/javascript">
     $(document).ready(function(){

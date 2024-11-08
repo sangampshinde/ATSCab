@@ -95,23 +95,14 @@
 
             <!-- Simulating a logged-in user -->
             <div class="login-container">
-                <div class="d-flex justify-content-center align-items-center dropdown">
-                    <div class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <a href="#" class="stay">Login</a>
-                    </div>
-                    <!-- Dropdown -->
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="edit_profile.php">Edit Profile</a>
-                        <a class="dropdown-item" href="booking-history.php">Booking History</a>
-                        <a href="#" class="dropdown-item" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
-                    </div>
-                </div>
-
-                <form id="logout-form" action="user-logout.php" method="POST" style="display: none;">
-                    <input type="hidden" name="_token" value="dummy_csrf_token">
-                </form>
+                <a href="login-page.php" class="stay">
+                <button type="button" class="btn mr-2" style="background-color: #00cc37; color: white;">Login</button>
+                </a>
+                <a href="registration-page.php" class="stay">
+                <button type="button" class="btn mr-5" style="background-color: #00cc37; color: white;">Register</button>
+                </a>
             </div>
-        </div>
+            
     </header>
     <!-- Header ends -->
 </div>

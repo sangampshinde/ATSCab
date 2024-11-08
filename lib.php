@@ -118,6 +118,11 @@ function registerUser($name, $email, $password, $user_type, $group_id) {
     $user_id = NULL;
     $remember_token = NULL;
     $deleted_at = NULL;
+    $user_type= NULL;
+    $group_id="Null";
+
+
+    
 
     // Prepare the SQL statement with explicit NULL values for unused fields
     $stmt = $conn->prepare("INSERT INTO users (user_id, name, email, password, user_type, group_id, api_token, remember_token, created_at, updated_at, deleted_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, ?)");
@@ -334,9 +339,43 @@ function resetPassword1($token, $newPassword) {
 }
 
 // ------------------------------------------------------------------
+// get vehicles types for dropdown bokking form
+function getVehicleTypes() {
+    // Connect to the database
+    $conn = connectDB();
 
+    // Prepare an array to store vehicle types
+    $vehicleTypes = [];
 
+    // Query to fetch enabled vehicle types
+    $stmt = $conn->prepare("SELECT id, vehicletype, displayname, icon, seats 
+                            FROM vehicle_types 
+                            WHERE isenable = 1");
 
+    if ($stmt->execute()) {
+        // Bind result variables
+        $stmt->bind_result($id, $vehicletype, $displayname, $icon, $seats);
+
+        // Fetch data and populate the array
+        while ($stmt->fetch()) {
+            $vehicleTypes[] = [
+                'id' => $id,
+                'vehicletype' => $vehicletype,
+                'displayname' => $displayname,
+                'icon' => $icon,
+                'seats' => $seats
+            ];
+        }
+    } else {
+        echo "Error fetching vehicle types: " . $stmt->error; // Debugging message
+    }
+
+    // Close statement and connection
+    $stmt->close();
+    $conn->close();
+
+    return $vehicleTypes;
+}
 
 
 ?>

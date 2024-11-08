@@ -1,81 +1,82 @@
 <?php
-
     require_once "lib.php";
     $conn = connectDB();
 
-
     if ($_SERVER["REQUEST_METHOD"] === "POST") {
-
         // Sanitize and validate input
         $name = trim($_POST["name"]);
         $email = trim($_POST["email"]);
         $password = $_POST["password"];
         $confirm_password = $_POST["confirm_password"];
-        $user_type = $_POST["user_type"];
-        $group_id = $_POST["group_id"];
-    
+
         // Password confirmation check
         if ($password !== $confirm_password) {
             echo "<script>alert('Passwords do not match!');</script>";
             exit();
         }
-    
+
         // Check if any field is empty (basic validation)
-        if (empty($name) || empty($email) || empty($password) || empty($user_type) || empty($group_id)) {
+        if (empty($name) || empty($email) || empty($password)) {
             echo "<script>alert('Please fill in all fields.');</script>";
             exit();
         }
-    
+
         // Additional validation for email format
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             echo "<script>alert('Invalid email format.');</script>";
             exit();
         }
-    
-        // Attempt to register the user
-        $result = registerUser($name, $email, $password, $user_type, $group_id);
-    
+
+        // Attempt to register the user (adjust function to match new parameters)
+        $result = registerUser($name, $email, $password);
+
         if ($result) {
-           
-            // header("Location: login-page.php?register=success");
             echo "<script>alert('Registration successful'); window.location.href = 'login-page.php?register=success';</script>";
             exit();
         } else {
             echo "<script>alert('Registration failed. Please try again.');</script>";
         }
     }
-    
+?>
+<?php
+    require_once "lib.php";
+    $conn = connectDB();
 
+    if ($_SERVER["REQUEST_METHOD"] === "POST") {
+        // Sanitize and validate input
+        $name = trim($_POST["name"]);
+        $email = trim($_POST["email"]);
+        $password = $_POST["password"];
+        $confirm_password = $_POST["confirm_password"];
 
-// if ($_SERVER["REQUEST_METHOD"] === "POST") {
+        // Password confirmation check
+        if ($password !== $confirm_password) {
+            echo "<script>alert('Passwords do not match!');</script>";
+            exit();
+        }
 
+        // Check if any field is empty (basic validation)
+        if (empty($name) || empty($email) || empty($password)) {
+            echo "<script>alert('Please fill in all fields.');</script>";
+            exit();
+        }
 
-    
-//     $name = $_POST["name"];
-//     $email = $_POST["email"];
-//     $password = $_POST["password"];
-//     $confirm_password = $_POST["confirm_password"];
-//     $user_type = $_POST["user_type"];
-//     $group_id = $_POST["group_id"];
+        // Additional validation for email format
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            echo "<script>alert('Invalid email format.');</script>";
+            exit();
+        }
 
-    
-//     // Password confirmation check
-//     if ($password !== $confirm_password) {
-//         echo "Passwords do not match!";
-//         exit();
-//     }
+        // Attempt to register the user (adjust function to match new parameters)
+        $result = registerUser($name, $email, $password);
 
-//     // Attempt to register the user
-//     $result = registerUser($name, $email, $password, $user_type, $group_id);
-//     if ($result) {
-//         echo "<script>alert('sucessful Registartion')</script>";
-//         header("Location: login-page.php?register=success");
-//         exit();
-//     } else {
-//         echo "<script>alert('Registration failed. Please try again.')</script>";
-//     }
-// }
-
+        if ($result) {
+            echo "<script>alert('Registration successful'); window.location.href = 'login-page.php?register=success';</script>";
+            exit();
+        } else {
+            echo "<script>alert('Registration failed. Please try again.');</script>";
+        }
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -219,20 +220,6 @@
         <div class="mb-3">
             <label for="confirm-password" class="form-label">Confirm Password</label>
             <input type="password" class="form-control" id="confirm-password" name="confirm_password" required placeholder="Confirm your password">
-        </div>
-        <div class="mb-3">
-            <label for="user_type" class="form-label">User Type</label>
-            <select class="form-select" id="user_type" name="user_type" required>
-                <option value="" disabled selected>Select user type</option>
-                <option value="A">A</option>
-                <option value="B">B</option>
-                <option value="C">C</option>
-                <option value="D">D</option>
-            </select>
-        </div>
-        <div class="mb-3">
-            <label for="group_id" class="form-label">Group ID</label>
-            <input type="number" class="form-control" id="group_id" name="group_id" required placeholder="Enter group ID">
         </div>
         <div class="d-grid">
             <button type="submit" class="btn btn-dark">Create Account</button>
