@@ -2,7 +2,7 @@
 <style>
         /* Developer-specific car card styling */
         #card.car-card-container .car-card {
-            background-color: #000 !important;
+            background-color: #fff !important;
             border-radius: 15px !important;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
             display: flex !important;
@@ -32,7 +32,7 @@
 
         /* Title and description styling */
         #card.car-card-container .car-card h2 {
-            color: #ffffff !important;
+            color: #000 !important;
             font-size: 20px !important;
             margin: 10px 0 5px 0 !important;
         }
@@ -51,12 +51,12 @@
             ?>
             <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                 <div class="car-card">
-                    <img src="<?php echo'images'.$car['image_url']; ?>" alt="<?php echo $car['name']; ?>" class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
+                    <img src="<?php echo 'images/'.$car['image_url']; ?>" alt="<?php echo $car['name']; ?>" class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
                     <h2><?php echo $car['name']; ?></h2>
                     <p>(6 Cars)</p> <!-- Adjust this to dynamically show the number of cars if needed -->
                 </div>
             </div>
-        <?php
+            <?php
         }
         ?>
     </div>
