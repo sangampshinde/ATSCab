@@ -86,15 +86,29 @@ function getTeamMembers() {
 $teamMembers = getTeamMembers(); // Fetch all team members
 
  //-------------------------------------------------------------------------
-
- // Fetch enabled cars from the database
-function fetchEnabledCars() {
+ function fetchEnabledInServiceCars() {
     $conn = connectDB();
-    $query = "SELECT * FROM cars WHERE status = 1"; // Adjust table name if necessary
+    
+    $query = "
+        SELECT 
+            vt.icon AS image_url,  -- Get icon from vehicle_types instead of vehicle_image from vehicles
+            vt.displayname AS name,
+            COUNT(v.id) AS car_count
+        FROM 
+            vehicles v
+        JOIN 
+            vehicle_types vt ON v.type_id = vt.id
+        WHERE 
+            v.in_service = 1
+            AND vt.isenable = 1
+        GROUP BY 
+            vt.id
+    ";
+
     $result = $conn->query($query);
 
     $cars = [];
-    if ($result->num_rows > 0) {
+    if ($result && $result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
             $cars[] = $row;
         }
@@ -104,12 +118,32 @@ function fetchEnabledCars() {
     return $cars;
 }
 
-// Fetch the enabled cars
-$cars = fetchEnabledCars();
+// Fetch the enabled in-service cars
+$cars = fetchEnabledInServiceCars();
+
+//  // Fetch enabled cars from the database
+// function fetchEnabledCars() {
+//     $conn = connectDB();
+//     $query = "SELECT * FROM cars WHERE status = 1"; // Adjust table name if necessary
+//     $result = $conn->query($query);
+
+//     $cars = [];
+//     if ($result->num_rows > 0) {
+//         while ($row = $result->fetch_assoc()) {
+//             $cars[] = $row;
+//         }
+//     }
+
+//     $conn->close();
+//     return $cars;
+// }
+
+// // Fetch the enabled cars
+// $cars = fetchEnabledCars();
 
 //----------------------------------------------------------------------
 
-function registerUser($name, $email, $password, $user_type, $group_id) {
+function registerUser($name, $email, $password, $user_type="NULL", $group_id="NULL") {
     $conn = connectDB();
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
     $apiToken = bin2hex(random_bytes(30)); // Generate a random 60-character API token
@@ -120,9 +154,6 @@ function registerUser($name, $email, $password, $user_type, $group_id) {
     $deleted_at = NULL;
     $user_type= NULL;
     $group_id="Null";
-
-
-    
 
     // Prepare the SQL statement with explicit NULL values for unused fields
     $stmt = $conn->prepare("INSERT INTO users (user_id, name, email, password, user_type, group_id, api_token, remember_token, created_at, updated_at, deleted_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, ?)");
@@ -260,83 +291,123 @@ function updateUserProfile($userId, $firstName, $lastName, $gender, $email, $pho
     $conn->close();
     return true;
 };
+
 // ----------------------------------------------------------------
+                // Function to send password reset email
+                // function sendPasswordResetLink($email) {
+                //     // Connect to the database
+                //     $conn = connectDB();
 
-function sendPasswordResetEmail($email) {
-    $conn = connectDB();
+                //     // Check if email exists
+                //     $sql = "SELECT * FROM users WHERE email = ?";
+                //     $stmt = $conn->prepare($sql);
+                //     $stmt->bind_param("s", $email);
+                //     $stmt->execute();
+                //     $result = $stmt->get_result();
 
-    // Check if the email exists in the database
-    $stmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $stmt->store_result();
+                //     if ($result->num_rows > 0) {
+                //         // Email exists, generate reset token
+                //         $user = $result->fetch_assoc();
+                //         $token = bin2hex(random_bytes(50)); // Generate a unique token
 
-    if ($stmt->num_rows > 0) {
-        // Generate a unique password reset token
-        $token = bin2hex(random_bytes(50)); // Random token generation
-        $expires = date("U") + 3600; // Token expires in 1 hour
+                //         // Store the token and expiry time (1 hour)
+                //         $expiry = date("Y-m-d H:i:s", strtotime('+1 hour'));
+                //         $sql = "UPDATE users SET reset_token = ?, reset_token_expiry = ? WHERE email = ?";
+                //         $stmt = $conn->prepare($sql);
+                //         $stmt->bind_param("sss", $token, $expiry, $email);
+                //         $stmt->execute();
 
-        // Store the token in the database
-        $stmt = $conn->prepare("INSERT INTO password_resets (email, token, expires) VALUES (?, ?, ?)");
-        $stmt->bind_param("ssi", $email, $token, $expires);
-        $stmt->execute();
+                //         // Send reset email
+                //         $resetLink = "http://yourdomain.com/reset_password.php?token=" . $token;
+                //         $subject = "Password Reset Request";
+                //         $message = "To reset your password, click on the following link: " . $resetLink;
+                //         $headers = "From: no-reply@yourdomain.com";
 
-        // Send the password reset email
-        $to = $email;
-        $subject = "Password Reset Request";
-        $resetLink = "https://yourdomain.com/reset-password.php?token=" . $token; // Adjust with your domain
-        $message = "To reset your password, please click the link below:\n\n" . $resetLink;
-        $headers = "From: noreply@yourdomain.com\r\n"; // Replace with your email
+                //         if (mail($email, $subject, $message, $headers)) {
+                //             return "A password reset link has been sent to your email.";
+                //         } else {
+                //             return "Error sending email.";
+                //         }
+                //     } else {
+                //         return "Email not found.";
+                //     }
 
-        if (mail($to, $subject, $message, $headers)) {
-            return true; // Email sent successfully
-        } else {
-            return false; // Failed to send email
-        }
-    } else {
-        return false; // Email not found
-    }
+                //     $conn->close();
+                // }
 
-    $stmt->close();
-    $conn->close();
-}
+                // Function to send password reset email
+                function sendPasswordResetLink($email) {
+                    echo "Starting password reset process.<br>";
+                    // Connect to the database
+                    $conn = connectDB();
+                    if (!$conn) {
+                        die("Database connection failed.");
+                    }
 
-// Function to reset password
-function resetPassword1($token, $newPassword) {
-    $conn = connectDB();
-
-    // Validate the token
-    $stmt = $conn->prepare("SELECT email FROM password_resets WHERE token = ?");
-    $stmt->bind_param("s", $token);
-    $stmt->execute();
-    $stmt->store_result();
-
-    if ($stmt->num_rows > 0) {
-        // Get the email associated with the token
-        $stmt->bind_result($email);
-        
-        $stmt->fetch();
-
-        // Update the user's password
-        $newPasswordHashed = password_hash($newPassword, PASSWORD_DEFAULT); // Hash the new password
-        $stmt = $conn->prepare("UPDATE users SET password = ? WHERE email = ?");
-        $stmt->bind_param("ss", $newPasswordHashed, $email);
-        $stmt->execute();
+                    echo "Database connected successfully.<br>";
 
 
-        // Remove the password reset token
-        $stmt = $conn->prepare("DELETE FROM password_resets WHERE token = ?");
-        $stmt->bind_param("s", $token);
-        $stmt->execute();
+                
+                    // Check if email exists
+                    $checkEmailSql = "SELECT * FROM users WHERE email = ?";
+                    $checkEmailStmt = $conn->prepare($checkEmailSql);
+                    $checkEmailStmt->bind_param("s", $email);
+                    $checkEmailStmt->execute();
+                    $result = $checkEmailStmt->get_result();
+                    if ($result->num_rows > 0) {
+                        echo "Email found.<br>";
+                        // Generate token and continue as normal
+                        // ...
+                    } else {
+                        echo "Email not found.<br>";
+                        return "Email not found.";
+                    }
+                
+                    if ($result->num_rows > 0) {
+                        // Email exists, generate reset token
+                        $token = bin2hex(random_bytes(50)); // Generate a unique token
+                        $expiry = date("Y-m-d H:i:s", strtotime('+1 hour')); // Token expiry time
+                
+                        // Store the token and expiry time in the database
+                        $updateTokenSql = "UPDATE users SET reset_token = ?, reset_token_expiry = ? WHERE email = ?";
+                        $updateTokenStmt = $conn->prepare($updateTokenSql);
+                        $updateTokenStmt->bind_param("sss", $token, $expiry, $email);
+                        if (!$updateTokenStmt->execute()) {
+                            $resultMessage = "Failed to store reset token.";
+                        } else {
+                            // Prepare the reset link
+                            $resetLink = "http://localhost/ATSCab/reset_password.php?token=" . urlencode($token);
+                
+                            // Prepare and send the reset email
+                            $subject = "Password Reset Request";
+                            $message = "To reset your password, please click the following link:\n\n" . $resetLink . "\n\nThis link will expire in 1 hour.";
+                            $headers = "From: try.sangam@gmail.com";
+                
+                            if (mail($email, $subject, $message, $headers)) {
+                                $resultMessage = "A password reset link has been sent to your email.";
+                            } else {
+                                $resultMessage = "Error sending email.";
+                            }
+                        }
+                    } else {
+                        $resultMessage = "Email not found.";
+                    }
+                
+                    // Close the prepared statements and connection
+                    $checkEmailStmt->close();
+                    if (isset($updateTokenStmt)) {
+                        $updateTokenStmt->close();
+                    }
+                    $conn->close();
+                    echo "Process complete.<br>";
+                
+                    return $resultMessage;
+                }
+                
 
-        return true; // Password reset successfully
-    } else {
-        return false; // Invalid token
-    }
 
-    $stmt->close();
-    $conn->close();
-}
+
+
 
 // ------------------------------------------------------------------
 // get vehicles types for dropdown bokking form

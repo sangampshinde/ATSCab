@@ -46,19 +46,15 @@
 
 <div id="card" class="container car-card-container">
     <div class="row">
-        <?php
-        foreach ($cars as $car) {
-            ?>
+        <?php foreach ($cars as $car) { ?>
             <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                 <div class="car-card">
-                    <img src="<?php echo 'images/'.$car['image_url']; ?>" alt="<?php echo $car['name']; ?>" class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
+                    <img src="<?php echo 'images/'.$car['image_url'].'.jpg'; ?>" alt="<?php echo $car['name']; ?>" class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
                     <h2><?php echo $car['name']; ?></h2>
-                    <p>(6 Cars)</p> <!-- Adjust this to dynamically show the number of cars if needed -->
+                    <!-- <p>(<?php// echo $car['car_count']; ?> Cars)</p> -->
                 </div>
             </div>
-            <?php
-        }
-        ?>
+        <?php } ?>
     </div>
 </div>
 

@@ -141,6 +141,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <!-- Login Button -->
             <div class="d-grid">
                 <button type="submit" class="btn btn-dark">Log In</button>
+                <a href="index.php"><button type="button" class="btn btn-dark">Back to Home</button></a>
             </div>
             <!-- Additional Links -->
             <div class="form-text text-center mt-3">

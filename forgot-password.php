@@ -1,3 +1,22 @@
+
+<?php
+// Include the function file for sending the reset link
+require_once "lib.php";
+$conn = connectDB(); // Adjust the path as needed
+
+// Initialize message variable
+$message = "";
+
+// Check if there's a message from the previous submission
+if (isset($_GET['message'])) {
+    $message = $_GET['message'];
+}
+?>
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
     <meta charset="utf-8">
@@ -88,25 +107,28 @@
 </head>
 <body>
 
+    <!-- forgot_password.php -->
     <div class="forgot-password-container">
-        <!-- Heading -->
         <h3 class="text-center">Forgot Password?</h3>
         <p class="text-center text-muted">Enter your email address to receive a password reset link.</p>
-        
-        <!-- Forgot Password Form -->
-        <form action="your-password-reset-endpoint" method="POST">
-            <!-- Email Field -->
+
+        <!-- Display the result message (success or error) -->
+        <?php if ($message): ?>
+            <div class="alert alert-info text-center"><?php echo htmlspecialchars($message); ?></div>
+        <?php endif; ?>
+
+        <!-- Password Reset Request Form -->
+        <form action="request_password_reset.php" method="POST">
             <div class="mb-3">
                 <label for="email" class="form-label">Email Address</label>
                 <input type="email" class="form-control" id="email" name="email" required placeholder="Enter your email">
             </div>
-            <!-- Send Password Reset Link Button -->
             <div class="d-grid">
                 <button type="submit" class="btn btn-dark">Send Password Reset Link</button>
             </div>
-            <!-- Additional Links -->
             <div class="form-text text-center mt-3">
                 <p>Remember your password? <a href="login-page.php">Log In</a></p>
+                <a href="index.php"><button type="button" class="btn btn-dark">Back to Home</button></a>
             </div>
         </form>
     </div>

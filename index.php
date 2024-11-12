@@ -5,7 +5,8 @@ include_once('stringdata.php');
 
 $frontendData = getFrontendData();
 $testimonials = getTestimonials();
-$cars = fetchEnabledCars();
+// $cars = fetchEnabledCars();
+$cars = fetchEnabledInServiceCars();
 // echo "<pre>";
 // print_r($cars);
 // echo "</pre>";
@@ -59,16 +60,16 @@ $vehicles = getVehicleTypes();
 // print_r($vehicles);
 
 
-if (!empty($vehicleTypes)) {
-    echo "<p>Vehicle Types List:</p>";
-    foreach ($vehicleTypes as $vehicle) {
-        echo "<pre>";
-        print_r($vehicle);  // This will show the structure of each item in $vehicleTypes
-        echo "</pre>";
-    }
-} else {
-    echo "<p>No vehicle types available.</p>";
-}
+// if (!empty($vehicles)) {
+//     echo "<p>Vehicle Types List:</p>";
+//     foreach ($vehicles as $vehicle) {
+//         echo "<pre>";
+//         print_r($vehicle);  // This will show the structure of each item in $vehicleTypes
+//         echo "</pre>";
+//     }
+// } else {
+//     echo "<p>No vehicle types available.</p>";
+// }
 
 
 
@@ -172,12 +173,19 @@ if (!empty($vehicleTypes)) {
                                     <label for="vehicle_type" class="">Preferred Vehicle</label>
                                     <select class="text-input" name="vehicle_type" id="vehicle_type" required>
                                         <option value="" disabled selected>Select Vehicle Type</option>
-                                        
+                                        <?php
+                                            // Fetch vehicle types
+                                            $vehicleTypes = getVehicleTypes();
+
+                                            // Loop through vehicle types and display them as options
+                                            foreach ($vehicleTypes as $vehicle) {
+                                                echo "<option value='{$vehicle['id']}'>{$vehicle['displayname']} ({$vehicle['seats']} seats)</option>";
+                                            }
+                                        ?>
                                     </select>
                                     <span id="vehicleError" class="text-danger"></span>
                                 </div>
                             </div>
-
                             <!-- Other Details -->
                             <div class="col-lg-12">
                                 <div class="form-group">
